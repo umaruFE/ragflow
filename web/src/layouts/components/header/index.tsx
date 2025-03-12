@@ -37,6 +37,7 @@ const RagHeader = () => {
     ],
     [t],
   );
+
   if (userInfo && JSON.parse(userInfo).name === 'admin') {
     tagsData = useMemo(
       () => [
