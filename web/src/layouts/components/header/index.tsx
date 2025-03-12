@@ -1,9 +1,9 @@
 import { ReactComponent as FileIcon } from '@/assets/svg/file-management.svg';
-import { ReactComponent as GraphIcon } from '@/assets/svg/graph.svg';
 import { ReactComponent as KnowledgeBaseIcon } from '@/assets/svg/knowledge-base.svg';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useFetchAppConf } from '@/hooks/logic-hooks';
 import { useNavigateWithFromState } from '@/hooks/route-hook';
+import authorizationUtil from '@/utils/authorization-util';
 import { MessageOutlined, SearchOutlined } from '@ant-design/icons';
 import { Flex, Layout, Radio, Space, theme } from 'antd';
 import { MouseEventHandler, useCallback, useMemo } from 'react';
@@ -24,17 +24,35 @@ const RagHeader = () => {
   const { t } = useTranslate('header');
   const appConf = useFetchAppConf();
   const { theme: themeRag } = useTheme();
-  const tagsData = useMemo(
+  // 新增用户信息hook调用
+  const userInfo = authorizationUtil.getUserInfo();
+  console.log(userInfo);
+  let tagsData = useMemo(
     () => [
-      { path: '/knowledge', name: t('knowledgeBase'), icon: KnowledgeBaseIcon },
+      // { path: '/knowledge', name: t('knowledgeBase'), icon: KnowledgeBaseIcon },
       { path: '/chat', name: t('chat'), icon: MessageOutlined },
-      { path: '/search', name: t('search'), icon: SearchOutlined },
-      { path: '/flow', name: t('flow'), icon: GraphIcon },
-      { path: '/file', name: t('fileManager'), icon: FileIcon },
+      // { path: '/search', name: t('search'), icon: SearchOutlined },
+      // { path: '/flow', name: t('flow'), icon: GraphIcon },
+      // { path: '/file', name: t('fileManager'), icon: FileIcon },
     ],
     [t],
   );
-
+  if (userInfo && JSON.parse(userInfo).name === 'admin') {
+    tagsData = useMemo(
+      () => [
+        {
+          path: '/knowledge',
+          name: t('knowledgeBase'),
+          icon: KnowledgeBaseIcon,
+        },
+        { path: '/chat', name: t('chat'), icon: MessageOutlined },
+        { path: '/search', name: t('search'), icon: SearchOutlined },
+        // { path: '/flow', name: t('flow'), icon: GraphIcon },
+        { path: '/file', name: t('fileManager'), icon: FileIcon },
+      ],
+      [t],
+    );
+  }
   const currentPath = useMemo(() => {
     return (
       tagsData.find((x) => pathname.startsWith(x.path))?.name || 'knowledge'
