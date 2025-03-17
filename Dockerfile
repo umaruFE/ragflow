@@ -6,6 +6,8 @@ SHELL ["/bin/bash", "-c"]
 ARG NEED_MIRROR=0
 ARG LIGHTEN=0
 ENV LIGHTEN=${LIGHTEN}
+ENV RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
+ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 
 WORKDIR /ragflow
 
@@ -44,33 +46,54 @@ ENV DEBIAN_FRONTEND=noninteractive
 # python-pptx:   default-jdk                              tika-server-standard-3.0.0.jar
 # selenium:      libatk-bridge2.0-0                       chrome-linux64-121-0-6167-85
 # Building C extensions: libpython3-dev libgtk-4-1 libnss3 xdg-utils libgbm-dev
-RUN --mount=type=cache,id=ragflow_apt,target=/var/cache/apt,sharing=locked \
-    if [ "$NEED_MIRROR" == "1" ]; then \
+
+RUN if [ "$NEED_MIRROR" == "1" ]; then \
         sed -i 's|http://archive.ubuntu.com|https://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list; \
-    fi; \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    fi
+
+RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache && \
-    chmod 1777 /tmp && \
-    apt update && \
-    apt --no-install-recommends install -y ca-certificates && \
-    apt update && \
-    apt install -y libglib2.0-0 libglx-mesa0 libgl1 && \
-    apt install -y pkg-config libicu-dev libgdiplus && \
+    chmod 1777 /tmp
+
+RUN apt update && \
+    apt --no-install-recommends install -y ca-certificates
+
+    RUN sed -i 's|http://archive.ubuntu.com|https://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list && \
+    sed -i 's|http://security.ubuntu.com|https://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
+
+RUN apt clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    while ! apt update; do \
+        echo "Retrying apt update..."; \
+        sleep 5; \
+    done
+
+RUN apt install -y libglib2.0-0 && \
+    apt install -y libglx-mesa0 && \
+    apt install -y libgl1 && \
+    apt install -y libicu70 libllvm15 libgl1-mesa-dri
+
+RUN apt --fix-broken install -y
+
+RUN apt install -y pkg-config libicu-dev libgdiplus && \
     apt install -y default-jdk && \
     apt install -y libatk-bridge2.0-0 && \
     apt install -y libpython3-dev libgtk-4-1 libnss3 xdg-utils libgbm-dev && \
     apt install -y libjemalloc-dev && \
     apt install -y python3-pip pipx nginx unzip curl wget git vim less
 
-RUN if [ "$NEED_MIRROR" == "1" ]; then \
+    RUN if [ "$NEED_MIRROR" == "1" ]; then \
         pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple && \
         pip3 config set global.trusted-host mirrors.aliyun.com; \
         mkdir -p /etc/uv && \
         echo "[[index]]" > /etc/uv/uv.toml && \
         echo 'url = "https://mirrors.aliyun.com/pypi/simple"' >> /etc/uv/uv.toml && \
         echo "default = true" >> /etc/uv/uv.toml; \
-    fi; \
-    pipx install uv
+    fi && \
+    while ! pipx install uv; do \
+        echo "Retrying pipx install uv..."; \
+        sleep 5; \
+    done
 
 ENV PYTHONDONTWRITEBYTECODE=1 DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 ENV PATH=/root/.local/bin:$PATH
@@ -97,6 +120,16 @@ RUN apt update && apt install -y curl build-essential \
 
 ENV PATH="/root/.cargo/bin:${PATH}"
 
+# 安装依赖（包括构建工具）
+RUN apt update && \
+    apt install -y curl build-essential
+
+# 安装 Rust 工具链
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal \
+    && echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc \
+    && source ~/.bashrc
+
+# 验证安装
 RUN cargo --version && rustc --version
 
 # Add msssql ODBC driver
@@ -149,18 +182,32 @@ COPY pyproject.toml uv.lock ./
 
 # https://github.com/astral-sh/uv/issues/10462
 # uv records index url into uv.lock but doesn't failover among multiple indexes
+# 安装系统依赖
+# 安装编译依赖
+RUN apt-get update && apt-get install -y \
+    build-essential cmake libopenblas-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 设置超时和 TLS 后端
+ENV UV_HTTP_TIMEOUT=300 \
+    UV_USE_NATIVE_TLS=1
+
+COPY pyproject.toml uv.lock ./
+
 RUN --mount=type=cache,id=ragflow_uv,target=/root/.cache/uv,sharing=locked \
+    # 替换镜像源
     if [ "$NEED_MIRROR" == "1" ]; then \
-        sed -i 's|pypi.org|mirrors.aliyun.com/pypi|g' uv.lock; \
+        sed -i 's|pypi\.org|mirrors.aliyun.com/pypi|g' uv.lock; \
     else \
         sed -i 's|mirrors.aliyun.com/pypi|pypi.org|g' uv.lock; \
     fi; \
-    if [ "$LIGHTEN" == "1" ]; then \
-        uv sync --python 3.10 --frozen; \
-    else \
-        uv sync --python 3.10 --frozen --all-extras; \
-    fi
-
+    # 调试输出
+    echo "=== Modified uv.lock ===" && \
+    cat uv.lock && \
+    echo "========================="; \
+    # 带重试和详细日志的安装
+    uv sync --python 3.10 --frozen --all-extras --verbose
+    
 COPY web web
 COPY docs docs
 RUN --mount=type=cache,id=ragflow_npm,target=/root/.npm,sharing=locked \
