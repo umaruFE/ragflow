@@ -68,6 +68,11 @@ RUN apt clean && \
         sleep 5; \
     done
 
+RUN apt install -y curl gnupg2 lsb-release && \
+    curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu $(lsb_release -cs) nginx" > /etc/apt/sources.list.d/nginx.list && \
+    apt update
+    
 RUN apt install -y libglib2.0-0 && \
     apt install -y libglx-mesa0 && \
     apt install -y libgl1 && \
