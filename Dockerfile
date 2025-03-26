@@ -11,6 +11,48 @@ ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 
 WORKDIR /ragflow
 
+
+# ----------- 新增: 安装 Nginx 编译依赖 -----------
+    RUN apt update && \
+    apt install -y \
+        wget \
+        build-essential \
+        libpcre3-dev \
+        zlib1g-dev \
+        libssl-dev \
+        git
+
+# ----------- 新增: 编译安装 Nginx 1.26.0 并集成 headers-more 模块 -----------
+RUN cd /tmp && \
+    # 下载 Nginx 源码
+    wget https://nginx.org/download/nginx-1.26.0.tar.gz && \
+    tar -zxvf nginx-1.26.0.tar.gz && \
+    # 下载 headers-more-nginx-module
+    git clone https://github.com/openresty/headers-more-nginx-module.git && \
+    cd nginx-1.26.0 && \
+    # 配置编译选项
+    ./configure \
+        --prefix=/usr/local/nginx \
+        --sbin-path=/usr/sbin/nginx \
+        --modules-path=/usr/lib/nginx/modules \
+        --conf-path=/etc/nginx/nginx.conf \
+        --error-log-path=/var/log/nginx/error.log \
+        --http-log-path=/var/log/nginx/access.log \
+        --pid-path=/var/run/nginx.pid \
+        --lock-path=/var/run/nginx.lock \
+        --http-client-body-temp-path=/var/cache/nginx/client_temp \
+        --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+        --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+        --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+        --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+        --with-http_ssl_module \
+        --with-http_realip_module \
+        --add-module=/tmp/headers-more-nginx-module && \
+    # 编译并安装
+    make && make install && \
+    # 清理临时文件
+    rm -rf /tmp/nginx-1.26.0*
+
 # Copy models downloaded via download_deps.py
 RUN mkdir -p /ragflow/rag/res/deepdoc /root/.ragflow
 RUN --mount=type=bind,from=infiniflow/ragflow_deps:latest,source=/huggingface.co,target=/huggingface.co \
@@ -85,7 +127,7 @@ RUN apt install -y pkg-config libicu-dev libgdiplus && \
     apt install -y libatk-bridge2.0-0 && \
     apt install -y libpython3-dev libgtk-4-1 libnss3 xdg-utils libgbm-dev && \
     apt install -y libjemalloc-dev && \
-    apt install -y python3-pip pipx nginx unzip curl wget git vim less
+    apt install -y python3-pip pipx unzip curl wget git vim less
 
     RUN if [ "$NEED_MIRROR" == "1" ]; then \
         pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple && \
