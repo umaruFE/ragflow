@@ -1,4 +1,5 @@
 import { useLogin, useRegister } from '@/hooks/login-hooks';
+import { useSystemConfig } from '@/hooks/system-hooks';
 import { rsaPsw } from '@/utils';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useEffect, useState } from 'react';
@@ -16,8 +17,13 @@ const Login = () => {
   const { register, loading: registerLoading } = useRegister();
   const { t } = useTranslation('translation', { keyPrefix: 'login' });
   const loading = signLoading || registerLoading;
+  const { config } = useSystemConfig();
+  const registerEnabled = config?.registerEnabled !== 0;
 
   const changeTitle = () => {
+    if (title === 'login' && !registerEnabled) {
+      return;
+    }
     setTitle((title) => (title === 'login' ? 'register' : 'login'));
   };
   const [form] = Form.useForm();
@@ -119,14 +125,14 @@ const Login = () => {
               </Form.Item>
             )}
             <div>
-              {/* {title === 'login' && (
+              {title === 'login' && registerEnabled && (
                 <div>
                   {t('signInTip')}
                   <Button type="link" onClick={changeTitle}>
                     {t('signUp')}
                   </Button>
                 </div>
-              )} */}
+              )}
               {title === 'register' && (
                 <div>
                   {t('signUpTip')}

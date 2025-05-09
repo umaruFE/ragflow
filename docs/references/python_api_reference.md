@@ -18,6 +18,22 @@ pip install ragflow-sdk
 
 ---
 
+## ERROR CODES
+
+---
+
+| Code | Message              | Description                 |
+|------|----------------------|-----------------------------|
+| 400  | Bad Request          | Invalid request parameters  |
+| 401  | Unauthorized         | Unauthorized access         |
+| 403  | Forbidden            | Access denied               |
+| 404  | Not Found            | Resource not found          |
+| 500  | Internal Server Error| Server internal error       |
+| 1001 | Invalid Chunk ID     | Invalid Chunk ID            |
+| 1002 | Chunk Update Failed  | Chunk update failed         |
+
+---
+
 ## OpenAI-Compatible API
 
 ---
@@ -79,11 +95,12 @@ else:
 ```python
 RAGFlow.create_dataset(
     name: str,
-    avatar: str = "",
-    description: str = "",
-    embedding_model: str = "BAAI/bge-large-zh-v1.5",
+    avatar: Optional[str] = None,
+    description: Optional[str] = None,
+    embedding_model: Optional[str] = "BAAI/bge-large-zh-v1.5@BAAI",
     permission: str = "me", 
     chunk_method: str = "naive",
+    pagerank: int = 0,
     parser_config: DataSet.ParserConfig = None
 ) -> DataSet
 ```
@@ -96,16 +113,16 @@ Creates a dataset.
 
 The unique name of the dataset to create. It must adhere to the following requirements:
 
-- Maximum 65,535 characters.
+- Maximum 128 characters.
 - Case-insensitive.
 
 ##### avatar: `str`
 
-Base64 encoding of the avatar. Defaults to `""`
+Base64 encoding of the avatar. Defaults to `None`
 
 ##### description: `str`
 
-A brief description of the dataset to create. Defaults to `""`.
+A brief description of the dataset to create. Defaults to `None`.
 
 
 ##### permission
@@ -129,36 +146,38 @@ The chunking method of the dataset to create. Available options:
 - `"presentation"`: Presentation
 - `"picture"`: Picture
 - `"one"`: One
-- `"knowledge_graph"`: Knowledge Graph  
-  Ensure your LLM is properly configured on the **Settings** page before selecting this. Please also note that Knowledge Graph consumes a large number of Tokens!
 - `"email"`: Email
+
+##### pagerank, `int`
+
+The pagerank of the dataset to create. Defaults to `0`.
 
 ##### parser_config
 
 The parser configuration of the dataset. A `ParserConfig` object's attributes vary based on the selected `chunk_method`:
 
 - `chunk_method`=`"naive"`:  
-  `{"chunk_token_num":128,"delimiter":"\\n!?;。；！？","html4excel":False,"layout_recognize":True,"raptor":{"user_raptor":False}}`.
+  `{"chunk_token_num":128,"delimiter":"\\n","html4excel":False,"layout_recognize":True,"raptor":{"use_raptor":False}}`.
 - `chunk_method`=`"qa"`:  
-  `{"raptor": {"user_raptor": False}}`
+  `{"raptor": {"use_raptor": False}}`
 - `chunk_method`=`"manuel"`:  
-  `{"raptor": {"user_raptor": False}}`
+  `{"raptor": {"use_raptor": False}}`
 - `chunk_method`=`"table"`:  
   `None`
 - `chunk_method`=`"paper"`:  
-  `{"raptor": {"user_raptor": False}}`
+  `{"raptor": {"use_raptor": False}}`
 - `chunk_method`=`"book"`:  
-  `{"raptor": {"user_raptor": False}}`
+  `{"raptor": {"use_raptor": False}}`
 - `chunk_method`=`"laws"`:  
-  `{"raptor": {"user_raptor": False}}`
+  `{"raptor": {"use_raptor": False}}`
 - `chunk_method`=`"picture"`:  
   `None`
 - `chunk_method`=`"presentation"`:  
-  `{"raptor": {"user_raptor": False}}`
+  `{"raptor": {"use_raptor": False}}`
 - `chunk_method`=`"one"`:  
   `None`
 - `chunk_method`=`"knowledge-graph"`:  
-  `{"chunk_token_num":128,"delimiter":"\\n!?;。；！？","entity_types":["organization","person","location","event","time"]}`
+  `{"chunk_token_num":128,"delimiter":"\\n","entity_types":["organization","person","location","event","time"]}`
 - `chunk_method`=`"email"`:  
   `None`
 
@@ -314,6 +333,7 @@ from ragflow_sdk import RAGFlow
 
 rag_object = RAGFlow(api_key="<YOUR_API_KEY>", base_url="http://<YOUR_BASE_URL>:9380")
 dataset = rag_object.list_datasets(name="kb_name")
+dataset = dataset[0]
 dataset.update({"embedding_model":"BAAI/bge-zh-v1.5", "chunk_method":"manual"})
 ```
 
@@ -381,32 +401,30 @@ A dictionary representing the attributes to update, with the following keys:
   - `"presentation"`: Presentation
   - `"picture"`: Picture
   - `"one"`: One
-  - `"knowledge_graph"`: Knowledge Graph  
-    Ensure your LLM is properly configured on the **Settings** page before selecting this. Please also note that Knowledge Graph consumes a large number of Tokens!
   - `"email"`: Email
 - `"parser_config"`: `dict[str, Any]` The parsing configuration for the document. Its attributes vary based on the selected `"chunk_method"`:
   - `"chunk_method"`=`"naive"`:  
-    `{"chunk_token_num":128,"delimiter":"\\n!?;。；！？","html4excel":False,"layout_recognize":True,"raptor":{"user_raptor":False}}`.
+    `{"chunk_token_num":128,"delimiter":"\\n","html4excel":False,"layout_recognize":True,"raptor":{"use_raptor":False}}`.
   - `chunk_method`=`"qa"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"manuel"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"table"`:  
     `None`
   - `chunk_method`=`"paper"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"book"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"laws"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"presentation"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"picture"`:  
     `None`
   - `chunk_method`=`"one"`:  
     `None`
   - `chunk_method`=`"knowledge-graph"`:  
-    `{"chunk_token_num":128,"delimiter":"\\n!?;。；！？","entity_types":["organization","person","location","event","time"]}`
+    `{"chunk_token_num":128,"delimiter":"\\n","entity_types":["organization","person","location","event","time"]}`
   - `chunk_method`=`"email"`:  
     `None`
 
@@ -506,7 +524,7 @@ A `Document` object contains the following attributes:
 - `name`: The document name. Defaults to `""`.
 - `thumbnail`: The thumbnail image of the document. Defaults to `None`.
 - `dataset_id`: The dataset ID associated with the document. Defaults to `None`.
-- `chunk_method` The chunk method name. Defaults to `"naive"`.
+- `chunk_method` The chunking method name. Defaults to `"naive"`.
 - `source_type`: The source type of the document. Defaults to `"local"`.
 - `type`: Type or category of the document. Defaults to `""`. Reserved for future use.
 - `created_by`: `str` The creator of the document. Defaults to `""`.
@@ -526,27 +544,25 @@ A `Document` object contains the following attributes:
 - `status`: `str` Reserved for future use.
 - `parser_config`: `ParserConfig` Configuration object for the parser. Its attributes vary based on the selected `chunk_method`:
   - `chunk_method`=`"naive"`:  
-    `{"chunk_token_num":128,"delimiter":"\\n!?;。；！？","html4excel":False,"layout_recognize":True,"raptor":{"user_raptor":False}}`.
+    `{"chunk_token_num":128,"delimiter":"\\n","html4excel":False,"layout_recognize":True,"raptor":{"use_raptor":False}}`.
   - `chunk_method`=`"qa"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"manuel"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"table"`:  
     `None`
   - `chunk_method`=`"paper"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"book"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"laws"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"presentation"`:  
-    `{"raptor": {"user_raptor": False}}`
+    `{"raptor": {"use_raptor": False}}`
   - `chunk_method`=`"picure"`:  
     `None`
   - `chunk_method`=`"one"`:  
     `None`
-  - `chunk_method`=`"knowledge-graph"`:  
-    `{"chunk_token_num":128,"delimiter": "\\n!?;。；！？","entity_types":["organization","person","location","event","time"]}`
   - `chunk_method`=`"email"`:  
     `None`
 
@@ -862,7 +878,7 @@ chunk.update({"content":"sdfx..."})
 ### Retrieve chunks
 
 ```python
-RAGFlow.retrieve(question:str="", dataset_ids:list[str]=None, document_ids=list[str]=None, page:int=1, page_size:int=30, similarity_threshold:float=0.2, vector_similarity_weight:float=0.3, top_k:int=1024,rerank_id:str=None,keyword:bool=False,higlight:bool=False) -> list[Chunk]
+RAGFlow.retrieve(question:str="", dataset_ids:list[str]=None, document_ids=list[str]=None, page:int=1, page_size:int=30, similarity_threshold:float=0.2, vector_similarity_weight:float=0.3, top_k:int=1024,rerank_id:str=None,keyword:bool=False,highlight:bool=False) -> list[Chunk]
 ```
 
 Retrieves chunks from specified datasets.
@@ -875,11 +891,11 @@ The user query or query keywords. Defaults to `""`.
 
 ##### dataset_ids: `list[str]`, *Required*
 
-The IDs of the datasets to search. Defaults to `None`. If you do not set this argument, ensure that you set `document_ids`.
+The IDs of the datasets to search. Defaults to `None`. 
 
 ##### document_ids: `list[str]`
 
-The IDs of the documents to search. Defaults to `None`. You must ensure all selected documents use the same embedding model. Otherwise, an error will occur. If you do not set this argument, ensure that you set `dataset_ids`.
+The IDs of the documents to search. Defaults to `None`. You must ensure all selected documents use the same embedding model. Otherwise, an error will occur. 
 
 ##### page: `int`
 
@@ -990,8 +1006,6 @@ The LLM settings for the chat assistant to create. Defaults to `None`. When the 
   This discourages the model from repeating the same information by penalizing words that have already appeared in the conversation. Defaults to `0.2`.
 - `frequency penalty`: `float`  
   Similar to the presence penalty, this reduces the model’s tendency to repeat the same words frequently. Defaults to `0.7`.
-- `max_token`: `int`  
-  The maximum length of the model's output, measured in the number of tokens (words or pieces of words). Defaults to `512`. If disabled, you lift the maximum token limit, allowing the model to determine the number of tokens in its responses.
 
 ##### prompt: `Chat.Prompt`
 
@@ -1054,7 +1068,6 @@ A dictionary representing the attributes to update, with the following keys:
   - `"top_p"`, `float` Also known as “nucleus sampling”, this parameter sets a threshold to select a smaller set of words to sample from.  
   - `"presence_penalty"`, `float` This discourages the model from repeating the same information by penalizing words that have appeared in the conversation.
   - `"frequency penalty"`, `float` Similar to presence penalty, this reduces the model’s tendency to repeat the same words.
-  - `"max_token"`, `int` The maximum length of the model's output, measured in the number of tokens (words or pieces of words). Defaults to `512`. If disabled, you lift the maximum token limit, allowing the model to determine the number of tokens in its responses.
 - `"prompt"` : Instructions for the LLM to follow.
   - `"similarity_threshold"`: `float` RAGFlow employs either a combination of weighted keyword similarity and weighted vector cosine similarity, or a combination of weighted keyword similarity and weighted rerank score during retrieval. This argument sets the threshold for similarities between the user query and chunks. If a similarity score falls below this threshold, the corresponding chunk will be excluded from the results. The default value is `0.2`.
   - `"keywords_similarity_weight"`: `float` This argument sets the weight of keyword similarity in the hybrid similarity score with vector cosine similarity or reranking model similarity. By adjusting this weight, you can control the influence of keyword similarity in relation to other similarity measures. The default value is `0.7`.
@@ -1471,8 +1484,8 @@ The parameters in `begin` component.
 from ragflow_sdk import RAGFlow, Agent
 
 rag_object = RAGFlow(api_key="<YOUR_API_KEY>", base_url="http://<YOUR_BASE_URL>:9380")
-AGENT_ID = "AGENT_ID"
-agent = rag_object.list_agents(id = AGENT_id)[0]
+agent_id = "AGENT_ID"
+agent = rag_object.list_agents(id = agent_id)[0]
 session = agent.create_session()
 ```
 
@@ -1720,3 +1733,5 @@ for agent in rag_object.list_agents():
 ```
 
 ---
+
+
