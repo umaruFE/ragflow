@@ -38,6 +38,7 @@ export default {
       previousPage: '上一页',
       nextPage: '下一页',
       add: '添加',
+      logout: '登出',
     },
     login: {
       login: '登录',
@@ -421,7 +422,7 @@ General：实体和关系提取提示来自 GitHub - microsoft/graphrag：基于
       chat: '聊天',
       newChat: '新建聊天',
       send: '发送',
-      sendPlaceholder: '给助理发送消息...',
+      sendPlaceholder: '请输入消息',
       chatConfiguration: '聊天配置',
       chatConfigurationDescription: '为你的知识库配置专属聊天助手！ 💕',
       assistantName: '助理姓名',

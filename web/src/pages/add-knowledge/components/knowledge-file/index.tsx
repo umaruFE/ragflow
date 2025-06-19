@@ -7,7 +7,7 @@ import {
 import { useSetSelectedRecord } from '@/hooks/logic-hooks';
 import { useSelectParserList } from '@/hooks/user-setting-hooks';
 import { getExtension } from '@/utils/document-util';
-import { Divider, Flex, Switch, Table, Tooltip, Typography } from 'antd';
+import { Flex, Table, Tooltip, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'react-i18next';
 import CreateFileModal from './create-file-modal';
@@ -121,11 +121,11 @@ const KnowledgeFile = () => {
         </div>
       ),
     },
-    {
-      title: t('chunkNumber'),
-      dataIndex: 'chunk_num',
-      key: 'chunk_num',
-    },
+    // {
+    //   title: t('chunkNumber'),
+    //   dataIndex: 'chunk_num',
+    //   key: 'chunk_num',
+    // },
     {
       title: t('uploadDate'),
       dataIndex: 'create_time',
@@ -134,29 +134,29 @@ const KnowledgeFile = () => {
         return formatDate(value);
       },
     },
-    {
-      title: t('chunkMethod'),
-      dataIndex: 'parser_id',
-      key: 'parser_id',
-      render: (text) => {
-        return parserList.find((x) => x.value === text)?.label;
-      },
-    },
-    {
-      title: t('enabled'),
-      key: 'status',
-      dataIndex: 'status',
-      render: (_, { status, id }) => (
-        <>
-          <Switch
-            checked={status === '1'}
-            onChange={(e) => {
-              setDocumentStatus({ status: e, documentId: id });
-            }}
-          />
-        </>
-      ),
-    },
+    // {
+    //   title: t('chunkMethod'),
+    //   dataIndex: 'parser_id',
+    //   key: 'parser_id',
+    //   render: (text) => {
+    //     return parserList.find((x) => x.value === text)?.label;
+    //   },
+    // },
+    // {
+    //   title: t('enabled'),
+    //   key: 'status',
+    //   dataIndex: 'status',
+    //   render: (_, { status, id }) => (
+    //     <>
+    //       <Switch
+    //         checked={status === '1'}
+    //         onChange={(e) => {
+    //           setDocumentStatus({ status: e, documentId: id });
+    //         }}
+    //       />
+    //     </>
+    //   ),
+    // },
     {
       title: (
         <span className="flex items-center gap-2">
@@ -199,9 +199,9 @@ const KnowledgeFile = () => {
 
   return (
     <div className={styles.datasetWrapper}>
-      <h3>{t('dataset')}</h3>
+      {/* <h3>{t('dataset')}</h3>
       <p>{t('datasetDescription')}</p>
-      <Divider></Divider>
+      <Divider></Divider> */}
       <DocumentToolbar
         selectedRowKeys={rowSelection.selectedRowKeys as string[]}
         showCreateModal={showCreateModal}

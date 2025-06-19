@@ -1,35 +1,28 @@
 import { useInfiniteFetchKnowledgeList } from '@/hooks/knowledge-hooks';
 import { useFetchUserInfo } from '@/hooks/user-setting-hooks';
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Divider,
-  Empty,
-  Flex,
-  Input,
-  Skeleton,
-  Space,
-  Spin,
-} from 'antd';
+import { Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSaveKnowledge } from './hooks';
-import KnowledgeCard from './knowledge-card';
-import KnowledgeCreatingModal from './knowledge-creating-modal';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useNavigate } from 'umi';
 import styles from './index.less';
 
 const KnowledgeList = () => {
   const { data: userInfo } = useFetchUserInfo();
   const { t } = useTranslation('translation', { keyPrefix: 'knowledgeList' });
+  const navigate = useNavigate();
   const {
     visible,
     hideModal,
     showModal,
     onCreateOk,
     loading: creatingLoading,
-  } = useSaveKnowledge();
+  } = useSaveKnowledge({
+    onSuccess: (kb) => {
+      navigate(`/knowledge/dataset?id=${kb.id}`);
+    },
+  });
   const {
     fetchNextPage,
     data,
@@ -38,6 +31,17 @@ const KnowledgeList = () => {
     handleInputChange,
     loading,
   } = useInfiniteFetchKnowledgeList();
+
+  useEffect(() => {
+    if (!loading && data?.pages?.length) {
+      const firstKb = data.pages[0]?.kbs?.[0];
+      if (firstKb) {
+        navigate(`/knowledge/dataset?id=${firstKb.id}`);
+      } else {
+        onCreateOk('test1');
+      }
+    }
+  }, [loading, data?.pages]);
 
   const nextList = useMemo(() => {
     const list =
@@ -51,7 +55,7 @@ const KnowledgeList = () => {
 
   return (
     <Flex className={styles.knowledge} vertical flex={1} id="scrollableDiv">
-      <div className={styles.topWrapper}>
+      {/* <div className={styles.topWrapper}>
         <div>
           <span className={styles.title}>
             {t('welcome')}, {userInfo.nickname}
@@ -112,7 +116,7 @@ const KnowledgeList = () => {
         visible={visible}
         hideModal={hideModal}
         onOk={onCreateOk}
-      ></KnowledgeCreatingModal>
+      ></KnowledgeCreatingModal> */}
     </Flex>
   );
 };

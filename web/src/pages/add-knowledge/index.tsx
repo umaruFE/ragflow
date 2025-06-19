@@ -4,12 +4,10 @@ import {
   useSecondPathName,
   useThirdPathName,
 } from '@/hooks/route-hook';
-import { Breadcrumb } from 'antd';
 import { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, Outlet } from 'umi';
-import Siderbar from './components/knowledge-sidebar';
 import { KnowledgeDatasetRouteKey, KnowledgeRouteKey } from './constant';
 import styles from './index.less';
 
@@ -59,9 +57,9 @@ const KnowledgeAdding = () => {
   return (
     <>
       <div className={styles.container}>
-        <Siderbar></Siderbar>
+        {/* <Siderbar></Siderbar> */}
         <div className={styles.contentWrapper}>
-          <Breadcrumb items={breadcrumbItems} />
+          {/* <Breadcrumb items={breadcrumbItems} /> */}
           <div className={styles.content}>
             <Outlet></Outlet>
           </div>

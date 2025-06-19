@@ -3,11 +3,11 @@ import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, MenuProps, Space } from 'antd';
 import camelCase from 'lodash/camelCase';
 import React, { useCallback, useMemo } from 'react';
-import User from '../user';
 
 import { useTheme } from '@/components/theme-provider';
 import { LanguageList, LanguageMap } from '@/constants/common';
 import { useChangeLanguage } from '@/hooks/logic-hooks';
+import { useLogout } from '@/hooks/login-hooks';
 import { useFetchUserInfo, useListTenant } from '@/hooks/user-setting-hooks';
 import { TenantRole } from '@/pages/user-setting/constants';
 import { BellRing, MoonIcon, SunIcon } from 'lucide-react';
@@ -68,6 +68,12 @@ const RightToolBar = () => {
     navigate('/user-setting/team');
   }, [navigate]);
 
+  const { logout } = useLogout();
+
+  const handleLogout = useCallback(() => {
+    logout();
+  }, [logout]);
+
   return (
     <div className={styled.toolbarWrapper}>
       <Space wrap size={16}>
@@ -98,7 +104,16 @@ const RightToolBar = () => {
             </div>
           </Circle>
         )}
-        <User></User>
+        <Circle>
+          <button
+            onClick={handleLogout}
+            className="text-sm font-medium text-gray-700 dark:text-gray-200"
+          >
+            {t('logout')}
+          </button>
+        </Circle>
+
+        {/* <User></User> */}
       </Space>
     </div>
   );

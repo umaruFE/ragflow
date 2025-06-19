@@ -145,9 +145,9 @@ export const useCreateKnowledge = () => {
     mutationFn: async (params: { id?: string; name: string }) => {
       const { data = {} } = await kbService.createKb(params);
       if (data.code === 0) {
-        message.success(
-          i18n.t(`message.${params?.id ? 'modified' : 'created'}`),
-        );
+        // message.success(
+        //   i18n.t(`message.${params?.id ? 'modified' : 'created'}`),
+        // );
         queryClient.invalidateQueries({ queryKey: ['fetchKnowledgeList'] });
       }
       return data;

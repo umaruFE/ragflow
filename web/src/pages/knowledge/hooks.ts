@@ -1,4 +1,3 @@
-import { KnowledgeRouteKey } from '@/constants/knowledge';
 import { useSetModalState } from '@/hooks/common-hooks';
 import { useCreateKnowledge } from '@/hooks/knowledge-hooks';
 import { useCallback, useState } from 'react';
@@ -26,12 +25,13 @@ export const useSaveKnowledge = () => {
       const ret = await createKnowledge({
         name,
       });
-
       if (ret?.code === 0) {
-        hideModal();
-        navigate(
-          `/knowledge/${KnowledgeRouteKey.Configuration}?id=${ret.data.kb_id}`,
-        );
+        navigate(`/knowledge/dataset?id=${ret.data.kb_id}`);
+
+        // hideModal();
+        // navigate(
+        //   `/knowledge/${KnowledgeRouteKey.Configuration}?id=${ret.data.kb_id}`,
+        // );
       }
     },
     [createKnowledge, hideModal, navigate],

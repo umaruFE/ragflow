@@ -2,7 +2,6 @@ import { ReactComponent as ChatAppCube } from '@/assets/svg/chat-app-cube.svg';
 import RenameModal from '@/components/rename-modal';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
-  Avatar,
   Button,
   Card,
   Divider,
@@ -11,13 +10,12 @@ import {
   MenuProps,
   Space,
   Spin,
-  Tag,
   Tooltip,
   Typography,
 } from 'antd';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
 import classNames from 'classnames';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ChatConfigurationModal from './chat-configuration-modal';
 import ChatContainer from './chat-container';
 import {
@@ -41,6 +39,7 @@ import {
   useGetChatSearchParams,
 } from '@/hooks/chat-hooks';
 import { useTranslate } from '@/hooks/common-hooks';
+import { useFetchKnowledgeList } from '@/hooks/knowledge-hooks';
 import { useSetSelectedRecord } from '@/hooks/logic-hooks';
 import { IDialog } from '@/interfaces/database/chat';
 import { PictureInPicture2 } from 'lucide-react';
@@ -89,6 +88,47 @@ const Chat = () => {
   const [controller, setController] = useState(new AbortController());
   const { showEmbedModal, hideEmbedModal, embedVisible, beta } =
     useShowEmbedModal();
+
+  const { list: knowledgeList } = useFetchKnowledgeList();
+
+  useEffect(() => {
+    if (!dialogLoading && dialogList.length === 0) {
+      const kbIds = knowledgeList.length > 0 ? [knowledgeList[0].id] : [];
+
+      onDialogEditOk(
+        {
+          name: '新助理',
+          description: '自动创建的聊天助理',
+          avatar: '',
+          // model: 'gpt-3.5-turbo',
+          prompt_config: {
+            empty_response: '',
+            prologue: '您好，欢迎使用国家超算长沙中心知识库！',
+            quote: true,
+            keyword: false,
+            tts: false,
+            system:
+              '你是一个智能助手，请总结知识库的内容来回答问题，请列举知识库中的数据详细回答。当所有知识库内容都与问题无关时，你的回答必须包括“知识库中未找到您要的答案！”这句话。回答需要考虑聊天历史。\n以下是知识库：\n{knowledge}\n以上是知识库。',
+            refine_multiturn: false,
+            use_kg: false,
+            reasoning: false,
+            parameters: [{ key: 'knowledge', optional: false }],
+          },
+          temperature: 0.7,
+          max_tokens: 2000,
+          prompt: '',
+          kb_ids: kbIds,
+        },
+        () => {
+          if (dialogList.length > 0) {
+            handleClickDialog(dialogList[0].id);
+          }
+        },
+      );
+    } else if (!dialogLoading && dialogList.length > 0) {
+      handleClickDialog(dialogList[0].id);
+    }
+  }, [dialogLoading, dialogList.length, knowledgeList]);
 
   const handleAppCardEnter = (id: string) => () => {
     handleItemEnter(id);
@@ -233,7 +273,7 @@ const Chat = () => {
 
   return (
     <Flex className={styles.chatWrapper}>
-      <Flex className={styles.chatAppWrapper}>
+      {/* <Flex className={styles.chatAppWrapper}>
         <Flex flex={1} vertical>
           <Button type="primary" onClick={handleShowChatConfigurationModal()}>
             {t('createAssistant')}
@@ -284,7 +324,7 @@ const Chat = () => {
             </Spin>
           </Flex>
         </Flex>
-      </Flex>
+      </Flex> */}
       <Divider type={'vertical'} className={styles.divider}></Divider>
       <Flex className={styles.chatTitleWrapper}>
         <Flex flex={1} vertical>
@@ -295,19 +335,28 @@ const Chat = () => {
           >
             <Space>
               <b>{t('chat')}</b>
-              <Tag>{conversationList.length}</Tag>
+              {/* <Tag>{conversationList.length}</Tag> */}
             </Space>
             <Tooltip title={t('newChat')}>
-              <div>
-                <SvgIcon
-                  name="plus-circle-fill"
-                  width={20}
-                  onClick={handleCreateTemporaryConversation}
-                ></SvgIcon>
-              </div>
+              <Button
+                type="text"
+                shape="circle"
+                icon={
+                  <SvgIcon name="plus-circle-fill" width={20} color="#1890ff" />
+                }
+                onClick={handleCreateTemporaryConversation}
+                style={{
+                  padding: '4px',
+                  transition: 'all 0.3s',
+                  '&:hover': {
+                    background: 'rgba(24, 144, 255, 0.1)',
+                    transform: 'scale(1.1)',
+                  },
+                }}
+              />
             </Tooltip>
           </Flex>
-          <Divider></Divider>
+          <Divider style={{ margin: '12px 0' }}></Divider>
           <Flex vertical gap={10} className={styles.chatTitleContent}>
             <Spin
               spinning={conversationLoading}

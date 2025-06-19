@@ -5,7 +5,6 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon, useNavigate } from 'umi';
-import RightPanel from './right-panel';
 
 import { Domain } from '@/constants/common';
 import styles from './index.less';
@@ -71,23 +70,55 @@ const Login = () => {
   };
 
   return (
-    <div className={styles.loginPage}>
+    <div
+      className={styles.loginPage}
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+      }}
+    >
+      <video
+        autoPlay
+        loop
+        muted
+        style={{
+          position: 'fixed',
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: -1,
+          top: 0,
+          left: 0,
+        }}
+      >
+        <source
+          src="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
+          type="video/mp4"
+        />
+      </video>
       <div className={styles.loginLeft}>
         <div className={styles.leftContainer}>
           <div className={styles.loginTitle}>
-            <div>{title === 'login' ? t('login') : t('register')}</div>
-            <span>
-              {title === 'login'
-                ? t('loginDescription')
-                : t('registerDescription')}
-            </span>
+            <div
+              style={{
+                textShadow: '0 0 5px white, 0 0 10px white, 0 0 15px white',
+                fontWeight: 'bold',
+              }}
+            >
+              {title === 'login' ? t('login') : t('register')}
+            </div>
           </div>
-
           <Form
             form={form}
-            layout="vertical"
+            layout="horizontal"
             name="dynamic_rule"
-            style={{ maxWidth: 600 }}
+            style={{
+              maxWidth: 600,
+              textShadow: '0 0 5px white, 0 0 10px white, 0 0 15px white',
+              fontWeight: 'bold',
+            }}
           >
             <Form.Item
               {...formItemLayout}
@@ -125,14 +156,14 @@ const Login = () => {
               </Form.Item>
             )}
             <div>
-              {title === 'login' && registerEnabled && (
+              {/* {title === 'login' && registerEnabled && (
                 <div>
                   {t('signInTip')}
                   <Button type="link" onClick={changeTitle}>
                     {t('signUp')}
                   </Button>
                 </div>
-              )}
+              )} */}
               {title === 'register' && (
                 <div>
                   {t('signUpTip')}
@@ -187,9 +218,6 @@ const Login = () => {
             )}
           </Form>
         </div>
-      </div>
-      <div className={styles.loginRight}>
-        <RightPanel></RightPanel>
       </div>
     </div>
   );
