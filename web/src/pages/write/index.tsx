@@ -129,6 +129,12 @@ const Write = () => {
         content: `# ${t('meetingMinutesTitle')}\n  \n  ## ${t('date')}: ${new Date().toLocaleDateString()}\n  \n  ## ${t('participants')}\n  \n  ## ${t('agenda')}\n  \n  ## ${t('discussions')}\n  \n  ## ${t('decisions')}\n  \n  ## ${t('actionItems')}\n  \n  ## ${t('nextMeeting')}\n  `,
         isCustom: false,
       },
+      {
+        id: 'default_3_v4f',
+        name: t('bidDocumentAssistant'),
+        content: `# ${t('bidDocumentAssistantTitle')}\n  \n  ## ${t('companyProfile')}\n  \n  ## ${t('projectUnderstanding')}\n  \n  ## ${t('technicalSolution')}\n  \n  ## ${t('implementationPlan')}\n  \n  ## ${t('projectTeam')}\n  \n  ## ${t('qualityAssurance')}\n  \n  ## ${t('budget')}\n  \n  ## ${t('appendix')}\n  `,
+        isCustom: false,
+      },
     ],
     [t],
   );
