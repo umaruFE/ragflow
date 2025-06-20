@@ -125,6 +125,12 @@ const routes = [
         path: '/file',
         component: '@/pages/file-manager',
       },
+
+      {
+        path: '/write',
+        component: '@/pages/write',
+        layout: false,
+      },
       {
         path: '/flow',
         component: '@/pages/flow/list',

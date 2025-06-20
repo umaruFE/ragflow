@@ -59,7 +59,7 @@ const methods = {
   },
   getList: {
     url: kb_list,
-    method: 'post',
+    method: 'get',
   },
   // document manager
   get_document_list: {
@@ -181,11 +181,11 @@ export function deleteKnowledgeGraph(knowledgeId: string) {
 export const listDataset = (
   params?: IFetchKnowledgeListRequestParams,
   body?: IFetchKnowledgeListRequestBody,
-) => request.post(api.kb_list, { data: body || {}, params });
+) => request.get(api.kb_list, { data: body || {}, params });
 
 export const listDocument = (
   params?: IFetchKnowledgeListRequestParams,
   body?: IFetchDocumentListRequestBody,
-) => request.post(api.get_document_list, { data: body || {}, params });
+) => request.get(api.get_document_list, { data: body || {}, params });
 
 export default kbService;

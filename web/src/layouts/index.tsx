@@ -1,4 +1,5 @@
 import { ReactComponent as KnowledgeBaseIcon } from '@/assets/svg/knowledge-base.svg';
+import { ReactComponent as WriteIcon } from '@/assets/svg/write.svg';
 import { useTheme } from '@/components/theme-provider';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useNavigateWithFromState } from '@/hooks/route-hook';
@@ -42,6 +43,7 @@ const App: React.FC = () => {
           icon: KnowledgeBaseIcon,
         },
         { path: '/chat', name: t('chat'), icon: MessageOutlined },
+        { path: '/write', name: t('write'), icon: WriteIcon },
         // { path: '/search', name: t('search'), icon: SearchOutlined },
       ],
       [t],
