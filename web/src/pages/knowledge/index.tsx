@@ -1,10 +1,23 @@
 import { useInfiniteFetchKnowledgeList } from '@/hooks/knowledge-hooks';
 import { useFetchUserInfo } from '@/hooks/user-setting-hooks';
-import { Flex } from 'antd';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  Button,
+  Divider,
+  Empty,
+  Flex,
+  Input,
+  Skeleton,
+  Space,
+  Spin,
+} from 'antd';
 import { useTranslation } from 'react-i18next';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSaveKnowledge } from './hooks';
+import KnowledgeCard from './knowledge-card';
+import KnowledgeCreatingModal from './knowledge-creating-modal';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'umi';
 import styles from './index.less';
 
@@ -19,9 +32,9 @@ const KnowledgeList = () => {
     onCreateOk,
     loading: creatingLoading,
   } = useSaveKnowledge({
-    onSuccess: (kb) => {
-      navigate(`/knowledge/dataset?id=${kb.id}`);
-    },
+    // onSuccess: (kb) => {
+    //   navigate(`/knowledge/dataset?id=${kb.id}`);
+    // },
   });
   const {
     fetchNextPage,
@@ -32,16 +45,16 @@ const KnowledgeList = () => {
     loading,
   } = useInfiniteFetchKnowledgeList();
 
-  useEffect(() => {
-    if (!loading && data?.pages?.length) {
-      const firstKb = data.pages[0]?.kbs?.[0];
-      if (firstKb) {
-        navigate(`/knowledge/dataset?id=${firstKb.id}`);
-      } else {
-        onCreateOk('test1');
-      }
-    }
-  }, [loading, data?.pages]);
+  // useEffect(() => {
+  //   if (!loading && data?.pages?.length) {
+  //     const firstKb = data.pages[0]?.kbs?.[0];
+  //     if (firstKb) {
+  //       navigate(`/knowledge/dataset?id=${firstKb.id}`);
+  //     } else {
+  //       onCreateOk('test1');
+  //     }
+  //   }
+  // }, [loading, data?.pages]);
 
   const nextList = useMemo(() => {
     const list =
@@ -55,13 +68,13 @@ const KnowledgeList = () => {
 
   return (
     <Flex className={styles.knowledge} vertical flex={1} id="scrollableDiv">
-      {/* <div className={styles.topWrapper}>
-        <div>
+      <div className={styles.topWrapper}>
+        {/* <div>
           <span className={styles.title}>
             {t('welcome')}, {userInfo.nickname}
           </span>
           <p className={styles.description}>{t('description')}</p>
-        </div>
+        </div> */}
         <Space size={'large'}>
           <Input
             placeholder={t('searchKnowledgePlaceholder')}
@@ -116,7 +129,7 @@ const KnowledgeList = () => {
         visible={visible}
         hideModal={hideModal}
         onOk={onCreateOk}
-      ></KnowledgeCreatingModal> */}
+      ></KnowledgeCreatingModal>
     </Flex>
   );
 };

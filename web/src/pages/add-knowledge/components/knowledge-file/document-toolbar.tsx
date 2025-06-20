@@ -11,6 +11,7 @@ import {
 } from '@/hooks/document-hooks';
 import { IDocumentInfo } from '@/interfaces/database/document';
 import {
+  ArrowLeftOutlined,
   DownOutlined,
   FileOutlined,
   FileTextOutlined,
@@ -20,10 +21,10 @@ import {
 import { Button, Dropdown, Flex, Input, MenuProps, Space } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
+import { useNavigate } from 'umi';
 import { RunningStatus } from './constant';
 
 import styles from './index.less';
-
 interface IProps {
   selectedRowKeys: string[];
   showCreateModal(): void;
@@ -47,7 +48,7 @@ const DocumentToolbar = ({
   const showDeleteConfirm = useShowDeleteConfirm();
   const { runDocumentByIds } = useRunNextDocument();
   const { setDocumentStatus } = useSetNextDocumentStatus();
-
+  const navigate = useNavigate();
   const actionItems: MenuProps['items'] = useMemo(() => {
     return [
       {
@@ -204,19 +205,28 @@ const DocumentToolbar = ({
 
   return (
     <div className={styles.filter}>
-      <Dropdown
-        menu={{ items }}
-        placement="bottom"
-        arrow={false}
-        disabled={disabled}
-      >
-        <Button>
-          <Space>
-            <b> {t('bulk')}</b>
-            <DownOutlined />
-          </Space>
+      <div>
+        <Button
+          type="link"
+          onClick={() => navigate('/knowledge')}
+          icon={<ArrowLeftOutlined />}
+        >
+          {t('back')}
         </Button>
-      </Dropdown>
+        <Dropdown
+          menu={{ items }}
+          placement="bottom"
+          arrow={false}
+          disabled={disabled}
+        >
+          <Button>
+            <Space>
+              <b> {t('bulk')}</b>
+              <DownOutlined />
+            </Space>
+          </Button>
+        </Dropdown>
+      </div>
       <Space>
         <Input
           placeholder={t('searchFiles')}

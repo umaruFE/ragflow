@@ -1,7 +1,5 @@
 import { PageHeader } from '@/components/page-header';
 import { useNavigatePage } from '@/hooks/logic-hooks/navigate-hooks';
-import { Outlet } from 'umi';
-import { SideBar } from './sidebar';
 
 export default function ProfileSetting() {
   const { navigateToHome } = useNavigatePage();
@@ -24,10 +22,10 @@ export default function ProfileSetting() {
       <PageHeader title="Profile & settings" back={navigateToHome}></PageHeader>
 
       <div className="flex flex-1 bg-muted/50">
-        <SideBar></SideBar>
+        {/* <SideBar></SideBar> */}
 
         <main className="flex-1 ">
-          <Outlet></Outlet>
+          {/* <Outlet></Outlet> */}
           {/* <h1 className="text-3xl font-bold mb-6"> {title}</h1> */}
         </main>
       </div>
