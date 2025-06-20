@@ -94,7 +94,9 @@ const Chat = () => {
   useEffect(() => {
     if (!dialogLoading && dialogList.length === 0) {
       const kbIds = knowledgeList.map((kb) => kb.id);
-
+      if (kbIds.length === 0) {
+        return;
+      }
       onDialogEditOk(
         {
           name: '新助理',
