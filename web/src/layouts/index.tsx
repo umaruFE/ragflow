@@ -30,6 +30,7 @@ const App: React.FC = () => {
     () => [
       { path: '/knowledge', name: t('knowledgeBase'), icon: KnowledgeBaseIcon },
       { path: '/chat', name: t('chat'), icon: MessageOutlined },
+      { path: '/write', name: t('write'), icon: WriteIcon },
     ],
     [t],
   );
