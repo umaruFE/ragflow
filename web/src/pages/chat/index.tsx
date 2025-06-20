@@ -93,7 +93,7 @@ const Chat = () => {
 
   useEffect(() => {
     if (!dialogLoading && dialogList.length === 0) {
-      const kbIds = knowledgeList.length > 0 ? [knowledgeList[0].id] : [];
+      const kbIds = knowledgeList.map((kb) => kb.id);
 
       onDialogEditOk(
         {
