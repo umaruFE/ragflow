@@ -2,6 +2,7 @@ import { ReactComponent as ChatAppCube } from '@/assets/svg/chat-app-cube.svg';
 import RenameModal from '@/components/rename-modal';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
+  Avatar,
   Button,
   Card,
   Divider,
@@ -275,7 +276,7 @@ const Chat = () => {
 
   return (
     <Flex className={styles.chatWrapper}>
-      {/* <Flex className={styles.chatAppWrapper}>
+      <Flex className={styles.chatAppWrapper}>
         <Flex flex={1} vertical>
           <Button type="primary" onClick={handleShowChatConfigurationModal()}>
             {t('createAssistant')}
@@ -326,7 +327,7 @@ const Chat = () => {
             </Spin>
           </Flex>
         </Flex>
-      </Flex> */}
+      </Flex>
       <Divider type={'vertical'} className={styles.divider}></Divider>
       <Flex className={styles.chatTitleWrapper}>
         <Flex flex={1} vertical>
