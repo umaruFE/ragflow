@@ -165,7 +165,7 @@ export const useSetNextDialog = () => {
           i18n.t(`message.${params.dialog_id ? 'modified' : 'created'}`),
         );
       }
-      return data?.code;
+      return data;
     },
   });
 

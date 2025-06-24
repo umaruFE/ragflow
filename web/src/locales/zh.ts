@@ -39,6 +39,7 @@ export default {
       nextPage: '下一页',
       add: '添加',
       logout: '登出',
+      selectKnowledgeBase: '选择知识库',
     },
     login: {
       login: '登录',

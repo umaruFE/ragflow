@@ -2,6 +2,7 @@ import { ReactComponent as ChatAppCube } from '@/assets/svg/chat-app-cube.svg';
 import RenameModal from '@/components/rename-modal';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
+  Avatar,
   Button,
   Card,
   Divider,
@@ -10,12 +11,11 @@ import {
   MenuProps,
   Space,
   Spin,
-  Tooltip,
   Typography,
 } from 'antd';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
 import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import ChatConfigurationModal from './chat-configuration-modal';
 import ChatContainer from './chat-container';
 import {
@@ -29,7 +29,6 @@ import {
 
 import EmbedModal from '@/components/api-service/embed-modal';
 import { useShowEmbedModal } from '@/components/api-service/hooks';
-import SvgIcon from '@/components/svg-icon';
 import { useTheme } from '@/components/theme-provider';
 import { SharedFrom } from '@/constants/chat';
 import {
@@ -42,7 +41,6 @@ import { useTranslate } from '@/hooks/common-hooks';
 import { useFetchKnowledgeList } from '@/hooks/knowledge-hooks';
 import { useSetSelectedRecord } from '@/hooks/logic-hooks';
 import { IDialog } from '@/interfaces/database/chat';
-import { PictureInPicture2 } from 'lucide-react';
 import styles from './index.less';
 
 const { Text } = Typography;
@@ -90,47 +88,6 @@ const Chat = () => {
     useShowEmbedModal();
 
   const { list: knowledgeList } = useFetchKnowledgeList();
-
-  useEffect(() => {
-    if (!dialogLoading && dialogList.length === 0) {
-      const kbIds = knowledgeList.map((kb) => kb.id);
-      if (kbIds.length === 0) {
-        return;
-      }
-      onDialogEditOk(
-        {
-          name: '新助理',
-          description: '自动创建的聊天助理',
-          avatar: '',
-          // model: 'gpt-3.5-turbo',
-          prompt_config: {
-            empty_response: '',
-            prologue: '您好，欢迎使用国家超算长沙中心知识库！',
-            quote: true,
-            keyword: false,
-            tts: false,
-            system:
-              '你是一个智能助手，请总结知识库的内容来回答问题，请列举知识库中的数据详细回答。当所有知识库内容都与问题无关时，你的回答必须包括“知识库中未找到您要的答案！”这句话。回答需要考虑聊天历史。\n以下是知识库：\n{knowledge}\n以上是知识库。',
-            refine_multiturn: false,
-            use_kg: false,
-            reasoning: false,
-            parameters: [{ key: 'knowledge', optional: false }],
-          },
-          temperature: 0.7,
-          max_tokens: 2000,
-          prompt: '',
-          kb_ids: kbIds,
-        },
-        () => {
-          if (dialogList.length > 0) {
-            handleClickDialog(dialogList[0].id);
-          }
-        },
-      );
-    } else if (!dialogLoading && dialogList.length > 0) {
-      handleClickDialog(dialogList[0].id);
-    }
-  }, [dialogLoading, dialogList.length, knowledgeList]);
 
   const handleAppCardEnter = (id: string) => () => {
     handleItemEnter(id);
@@ -228,18 +185,18 @@ const Chat = () => {
           </Space>
         ),
       },
-      { type: 'divider' },
-      {
-        key: '3',
-        onClick: handleShowOverviewModal(dialog),
-        label: (
-          <Space>
-            {/* <KeyOutlined /> */}
-            <PictureInPicture2 className="size-4" />
-            {t('embedIntoSite', { keyPrefix: 'common' })}
-          </Space>
-        ),
-      },
+      // { type: 'divider' },
+      // {
+      //   key: '3',
+      //   onClick: handleShowOverviewModal(dialog),
+      //   label: (
+      //     <Space>
+      //       {/* <KeyOutlined /> */}
+      //       <PictureInPicture2 className="size-4" />
+      //       {t('embedIntoSite', { keyPrefix: 'common' })}
+      //     </Space>
+      //   ),
+      // },
     ];
 
     return appItems;
@@ -275,7 +232,7 @@ const Chat = () => {
 
   return (
     <Flex className={styles.chatWrapper}>
-      {/* <Flex className={styles.chatAppWrapper}>
+      <Flex className={styles.chatAppWrapper}>
         <Flex flex={1} vertical>
           <Button type="primary" onClick={handleShowChatConfigurationModal()}>
             {t('createAssistant')}
@@ -326,8 +283,8 @@ const Chat = () => {
             </Spin>
           </Flex>
         </Flex>
-      </Flex> */}
-      <Divider type={'vertical'} className={styles.divider}></Divider>
+      </Flex>
+      {/* <Divider type={'vertical'} className={styles.divider}></Divider>
       <Flex className={styles.chatTitleWrapper}>
         <Flex flex={1} vertical>
           <Flex
@@ -337,7 +294,7 @@ const Chat = () => {
           >
             <Space>
               <b>{t('chat')}</b>
-              {/* <Tag>{conversationList.length}</Tag> */}
+              <Tag>{conversationList.length}</Tag>
             </Space>
             <Tooltip title={t('newChat')}>
               <Button
@@ -405,7 +362,7 @@ const Chat = () => {
             </Spin>
           </Flex>
         </Flex>
-      </Flex>
+      </Flex> */}
       <Divider type={'vertical'} className={styles.divider}></Divider>
       <ChatContainer controller={controller}></ChatContainer>
       {dialogEditVisible && (
@@ -415,7 +372,14 @@ const Chat = () => {
           showModal={showDialogEditModal}
           hideModal={hideDialogEditModal}
           loading={dialogSettingLoading}
-          onOk={onDialogEditOk}
+          onOk={(dialog) =>
+            onDialogEditOk(dialog, (ret) => {
+              debugger;
+              if (ret.id) {
+                addTemporaryConversation(ret.id);
+              }
+            })
+          }
           clearDialog={clearDialog}
         ></ChatConfigurationModal>
       )}
