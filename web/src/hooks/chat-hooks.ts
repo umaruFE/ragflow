@@ -37,17 +37,16 @@ export const useClickDialogCard = () => {
 
   const handleClickDialog = useCallback(
     (dialogIdParam: string, conversationIdParam: string) => {
-      
       const searchParams = new URLSearchParams(window.location.search);
       const dialogId = searchParams.get(ChatSearchParams.DialogId);
-      console.log('dialogIdTemp:'+dialogIdParam+',dialogId:'+dialogId)
-      if(dialogId && dialogIdParam && dialogId !== dialogIdParam){
+      console.log('dialogIdTemp:' + dialogIdParam + ',dialogId:' + dialogId);
+      if (dialogIdParam && dialogId !== dialogIdParam) {
         newQueryParameters.set(ChatSearchParams.DialogId, dialogIdParam);
         setSearchParams(newQueryParameters);
       }
-      
-        // newQueryParameters.set(ChatSearchParams.DialogId, dialogIdParam);
-        // setSearchParams(newQueryParameters);
+
+      // newQueryParameters.set(ChatSearchParams.DialogId, dialogIdParam);
+      // setSearchParams(newQueryParameters);
     },
     [newQueryParameters, setSearchParams],
   );
