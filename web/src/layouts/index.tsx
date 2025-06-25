@@ -36,16 +36,21 @@ const App: React.FC = () => {
         icon: MessageOutlined,
       },
       {
-        path: '/specialSubsidiesQA',
+        path: '/subsidiesQA',
         name: t('specialSubsidiesQA'),
         icon: MessageOutlined,
       },
-      { path: '/write', name: t('write'), icon: WriteIcon },
       {
-        path: '/enterpriseDiagnosis',
-        name: t('enterpriseDiagnosis'),
+        path: '/industryRegulations',
+        name: t('industryRegulations'),
         icon: MessageOutlined,
       },
+      { path: '/write', name: t('write'), icon: WriteIcon },
+      // {
+      //   path: '/enterpriseDiagnosis',
+      //   name: t('enterpriseDiagnosis'),
+      //   icon: MessageOutlined,
+      // },
     ],
     [t],
   );

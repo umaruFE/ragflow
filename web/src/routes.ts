@@ -87,6 +87,18 @@ const routes = [
         component: '@/pages/chat',
       },
       {
+        path: '/taxIncentivesQA',
+        component: '@/pages/taxIncentivesQA',
+      },
+      {
+        path: '/subsidiesQA',
+        component: '@/pages/subsidiesQA',
+      },
+      {
+        path: '/industryRegulations',
+        component: '@/pages/industryRegulations',
+      },
+      {
         path: '/user-setting',
         component: '@/pages/user-setting',
         routes: [

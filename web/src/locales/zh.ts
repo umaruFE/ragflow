@@ -77,6 +77,7 @@ export default {
       industryPolicyRegulations: '行业政策法规',
       taxIncentivesQA: '税赋优惠问答',
       specialSubsidiesQA: '专项补贴问答',
+      industryRegulations: '行业法规问答',
       enterpriseDiagnosis: '企业诊断',
     },
     knowledgeList: {

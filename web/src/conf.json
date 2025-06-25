@@ -1,3 +1,6 @@
 {
-  "appName": "国家超算长沙中心"
+  "appName": "国家超算长沙中心",
+  "taxIncentivesQA": "c1958d94516b11f0a4f90242ac120006",
+  "subsidiesQA": "bbc8ed9c4dac11f09a930242ac120006",
+  "industryRegulations": "bbc8ed9c4dac11f09a930242ac120006"
 }
