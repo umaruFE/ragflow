@@ -1,6 +1,7 @@
 import { ReactComponent as ChatAppCube } from '@/assets/svg/chat-app-cube.svg';
 import RenameModal from '@/components/rename-modal';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import SvgIcon from '@/components/svg-icon';
 import {
   Avatar,
   Button,
@@ -12,6 +13,8 @@ import {
   Space,
   Spin,
   Typography,
+  Tag,
+  Tooltip 
 } from 'antd';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
 import classNames from 'classnames';
@@ -36,6 +39,7 @@ import {
   useClickDialogCard,
   useFetchNextDialogList,
   useGetChatSearchParams,
+  useFetchNextConversationList
 } from '@/hooks/chat-hooks';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useFetchKnowledgeList } from '@/hooks/knowledge-hooks';
@@ -139,8 +143,8 @@ const Chat = () => {
     };
 
   const handleDialogCardClick = useCallback(
-    (dialogId: string) => () => {
-      handleClickDialog(dialogId);
+    (dialogIdTemp: string) => () => {
+      handleClickDialog(dialogIdTemp, conversationId);
     },
     [handleClickDialog],
   );
@@ -284,8 +288,8 @@ const Chat = () => {
           </Flex>
         </Flex>
       </Flex>
-      {/* <Divider type={'vertical'} className={styles.divider}></Divider>
-      <Flex className={styles.chatTitleWrapper}>
+      <Divider type={'vertical'} className={styles.divider}></Divider>
+      {/* <Flex className={styles.chatTitleWrapper}>
         <Flex flex={1} vertical>
           <Flex
             justify={'space-between'}
@@ -320,7 +324,7 @@ const Chat = () => {
             <Spin
               spinning={conversationLoading}
               wrapperClassName={styles.chatSpin}
-            >
+            > 
               {conversationList.map((x) => (
                 <Card
                   key={x.id}
@@ -362,8 +366,8 @@ const Chat = () => {
             </Spin>
           </Flex>
         </Flex>
-      </Flex> */}
-      <Divider type={'vertical'} className={styles.divider}></Divider>
+      </Flex>
+      <Divider type={'vertical'} className={styles.divider}></Divider> */}
       <ChatContainer controller={controller}></ChatContainer>
       {dialogEditVisible && (
         <ChatConfigurationModal
