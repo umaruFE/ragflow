@@ -29,7 +29,7 @@ const App: React.FC = () => {
   let tagsData = useMemo(
     () => [
       // { path: '/knowledge', name: t('knowledgeBase'), icon: KnowledgeBaseIcon },
-      { path: '/chat', name: t('chat'), icon: MessageOutlined },
+      // { path: '/chat', name: t('chat'), icon: MessageOutlined },
       {
         path: '/taxIncentivesQA',
         name: t('taxIncentivesQA'),
@@ -70,16 +70,16 @@ const App: React.FC = () => {
           icon: MessageOutlined,
         },
         {
-          path: '/specialSubsidiesQA',
+          path: '/subsidiesQA',
           name: t('specialSubsidiesQA'),
           icon: MessageOutlined,
         },
-        { path: '/write', name: t('write'), icon: WriteIcon },
         {
-          path: '/enterpriseDiagnosis',
-          name: t('enterpriseDiagnosis'),
+          path: '/industryRegulations',
+          name: t('industryRegulations'),
           icon: MessageOutlined,
         },
+        { path: '/write', name: t('write'), icon: WriteIcon },
         // { path: '/search', name: t('search'), icon: SearchOutlined },
       ],
       [t],
