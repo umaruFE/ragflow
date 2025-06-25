@@ -1,20 +1,7 @@
-import { ReactComponent as ChatAppCube } from '@/assets/svg/chat-app-cube.svg';
 import RenameModal from '@/components/rename-modal';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import {
-  Avatar,
-  Button,
-  Card,
-  Divider,
-  Dropdown,
-  Flex,
-  MenuProps,
-  Space,
-  Spin,
-  Typography,
-} from 'antd';
+import { Flex, MenuProps, Space, Typography } from 'antd';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
-import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import ChatConfigurationModal from './chat-configuration-modal';
 import ChatContainer from './chat-container';
@@ -232,7 +219,7 @@ const Chat = () => {
 
   return (
     <Flex className={styles.chatWrapper}>
-      <Flex className={styles.chatAppWrapper}>
+      {/* <Flex className={styles.chatAppWrapper}>
         <Flex flex={1} vertical>
           <Button type="primary" onClick={handleShowChatConfigurationModal()}>
             {t('createAssistant')}
@@ -284,7 +271,7 @@ const Chat = () => {
           </Flex>
         </Flex>
       </Flex>
-      {/* <Divider type={'vertical'} className={styles.divider}></Divider>
+      <Divider type={'vertical'} className={styles.divider}></Divider>
       <Flex className={styles.chatTitleWrapper}>
         <Flex flex={1} vertical>
           <Flex
@@ -362,8 +349,8 @@ const Chat = () => {
             </Spin>
           </Flex>
         </Flex>
-      </Flex> */}
-      <Divider type={'vertical'} className={styles.divider}></Divider>
+      </Flex>
+      <Divider type={'vertical'} className={styles.divider}></Divider> */}
       <ChatContainer controller={controller}></ChatContainer>
       {dialogEditVisible && (
         <ChatConfigurationModal
