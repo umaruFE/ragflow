@@ -287,7 +287,31 @@ export const useSetConversation = () => {
     [updateConversation, dialogId],
   );
 
-  return { setConversation };
+  const setConversationEmpty = useCallback(
+    async (
+      message: string,
+      dialogIdTemp: string,
+      isNew: boolean = false,
+      conversationId?: string,
+    ) => {
+      const data = await updateConversation({
+        dialog_id: dialogIdTemp,
+        name: message,
+        is_new: isNew,
+        conversation_id: conversationId,
+        message: [
+          {
+            role: MessageType.Assistant,
+            content: message,
+          },
+        ],
+      });
+
+      return data;
+    },
+    [updateConversation, dialogId],
+  );
+  return { setConversation, setConversationEmpty };
 };
 
 export const useSelectNextMessages = () => {

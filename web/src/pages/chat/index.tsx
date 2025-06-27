@@ -1,6 +1,7 @@
 import { ReactComponent as ChatAppCube } from '@/assets/svg/chat-app-cube.svg';
 import RenameModal from '@/components/rename-modal';
-import SvgIcon from '@/components/svg-icon';
+import chatService from '@/services/chat-service';
+import { getConversationId } from '@/utils/chat';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Avatar,
@@ -12,8 +13,6 @@ import {
   MenuProps,
   Space,
   Spin,
-  Tag,
-  Tooltip,
   Typography,
 } from 'antd';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
@@ -28,6 +27,7 @@ import {
   useHandleItemHover,
   useRenameConversation,
   useSelectDerivedConversationList,
+  useSetConversation,
 } from './hooks';
 
 import EmbedModal from '@/components/api-service/embed-modal';
@@ -89,6 +89,7 @@ const Chat = () => {
   const [controller, setController] = useState(new AbortController());
   const { showEmbedModal, hideEmbedModal, embedVisible, beta } =
     useShowEmbedModal();
+  const { setConversationEmpty } = useSetConversation();
 
   const { list: knowledgeList } = useFetchKnowledgeList();
 
@@ -143,12 +144,33 @@ const Chat = () => {
 
   const handleDialogCardClick = useCallback(
     (dialogIdTemp: string) => () => {
-      if (!conversationId) {
-        addTemporaryConversation();
-      }
-      handleClickDialog(dialogIdTemp, conversationId);
+      chatService
+        .listConversation({ dialogId: dialogIdTemp })
+        .then(({ data: currentConversationList }: { data: any[] }) => {
+          if (!currentConversationList?.data?.length) {
+            const newId = getConversationId();
+            setConversationEmpty('新对话', dialogIdTemp, true, newId);
+            handleClickDialog(dialogIdTemp, newId);
+          } else {
+            handleClickDialog(dialogIdTemp, conversationId);
+          }
+        });
+
+      // if (!currentConversationList?.length) {
+      //   handleClickDialog(dialogIdTemp, '');
+      //   const newId = getConversationId();
+      //   debugger
+      //   setConversationEmpty('新对话', dialogIdTemp, true, newId);
+      // } else {
+      //   handleClickDialog(dialogIdTemp, conversationId);
+      // }
     },
-    [handleClickDialog, addTemporaryConversation, conversationId],
+    [
+      handleClickDialog,
+      conversationList,
+      conversationId,
+      handleClickConversation,
+    ],
   );
 
   const handleConversationCardClick = useCallback(
@@ -291,7 +313,7 @@ const Chat = () => {
         </Flex>
       </Flex>
       <Divider type={'vertical'} className={styles.divider}></Divider>
-      <Flex className={styles.chatTitleWrapper}>
+      {/* <Flex className={styles.chatTitleWrapper}>
         <Flex flex={1} vertical>
           <Flex
             justify={'space-between'}
@@ -369,7 +391,7 @@ const Chat = () => {
           </Flex>
         </Flex>
       </Flex>
-      <Divider type={'vertical'} className={styles.divider}></Divider>
+      <Divider type={'vertical'} className={styles.divider}></Divider> */}
       <ChatContainer controller={controller}></ChatContainer>
       {dialogEditVisible && (
         <ChatConfigurationModal
