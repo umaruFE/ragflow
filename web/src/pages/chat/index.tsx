@@ -1,6 +1,17 @@
 import RenameModal from '@/components/rename-modal';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Flex, MenuProps, Space, Typography } from 'antd';
+import {
+  Avatar,
+  Button,
+  Card,
+  Divider,
+  Dropdown,
+  Flex,
+  MenuProps,
+  Space,
+  Spin,
+  Typography,
+} from 'antd';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
 import { useCallback, useState } from 'react';
 import ChatConfigurationModal from './chat-configuration-modal';
@@ -126,8 +137,8 @@ const Chat = () => {
     };
 
   const handleDialogCardClick = useCallback(
-    (dialogId: string) => () => {
-      handleClickDialog(dialogId);
+    (dialogIdTemp: string) => () => {
+      handleClickDialog(dialogIdTemp, conversationId);
     },
     [handleClickDialog],
   );
@@ -219,7 +230,7 @@ const Chat = () => {
 
   return (
     <Flex className={styles.chatWrapper}>
-      {/* <Flex className={styles.chatAppWrapper}>
+      <Flex className={styles.chatAppWrapper}>
         <Flex flex={1} vertical>
           <Button type="primary" onClick={handleShowChatConfigurationModal()}>
             {t('createAssistant')}
@@ -272,7 +283,7 @@ const Chat = () => {
         </Flex>
       </Flex>
       <Divider type={'vertical'} className={styles.divider}></Divider>
-      <Flex className={styles.chatTitleWrapper}>
+      {/* <Flex className={styles.chatTitleWrapper}>
         <Flex flex={1} vertical>
           <Flex
             justify={'space-between'}
@@ -307,7 +318,7 @@ const Chat = () => {
             <Spin
               spinning={conversationLoading}
               wrapperClassName={styles.chatSpin}
-            >
+            > 
               {conversationList.map((x) => (
                 <Card
                   key={x.id}
