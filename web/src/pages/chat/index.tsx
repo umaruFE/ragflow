@@ -1,7 +1,7 @@
 import { ReactComponent as ChatAppCube } from '@/assets/svg/chat-app-cube.svg';
 import RenameModal from '@/components/rename-modal';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import SvgIcon from '@/components/svg-icon';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Avatar,
   Button,
@@ -12,9 +12,9 @@ import {
   MenuProps,
   Space,
   Spin,
-  Typography,
   Tag,
-  Tooltip 
+  Tooltip,
+  Typography,
 } from 'antd';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
 import classNames from 'classnames';
@@ -39,7 +39,6 @@ import {
   useClickDialogCard,
   useFetchNextDialogList,
   useGetChatSearchParams,
-  useFetchNextConversationList
 } from '@/hooks/chat-hooks';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useFetchKnowledgeList } from '@/hooks/knowledge-hooks';
@@ -144,9 +143,12 @@ const Chat = () => {
 
   const handleDialogCardClick = useCallback(
     (dialogIdTemp: string) => () => {
+      if (!conversationId) {
+        addTemporaryConversation();
+      }
       handleClickDialog(dialogIdTemp, conversationId);
     },
-    [handleClickDialog],
+    [handleClickDialog, addTemporaryConversation, conversationId],
   );
 
   const handleConversationCardClick = useCallback(
@@ -289,7 +291,7 @@ const Chat = () => {
         </Flex>
       </Flex>
       <Divider type={'vertical'} className={styles.divider}></Divider>
-      {/* <Flex className={styles.chatTitleWrapper}>
+      <Flex className={styles.chatTitleWrapper}>
         <Flex flex={1} vertical>
           <Flex
             justify={'space-between'}
@@ -324,7 +326,7 @@ const Chat = () => {
             <Spin
               spinning={conversationLoading}
               wrapperClassName={styles.chatSpin}
-            > 
+            >
               {conversationList.map((x) => (
                 <Card
                   key={x.id}
@@ -367,7 +369,7 @@ const Chat = () => {
           </Flex>
         </Flex>
       </Flex>
-      <Divider type={'vertical'} className={styles.divider}></Divider> */}
+      <Divider type={'vertical'} className={styles.divider}></Divider>
       <ChatContainer controller={controller}></ChatContainer>
       {dialogEditVisible && (
         <ChatConfigurationModal
@@ -376,14 +378,13 @@ const Chat = () => {
           showModal={showDialogEditModal}
           hideModal={hideDialogEditModal}
           loading={dialogSettingLoading}
-          onOk={(dialog) =>
-            onDialogEditOk(dialog, (ret) => {
-              debugger;
-              if (ret.id) {
-                addTemporaryConversation(ret.id);
+          onOk={(dialog) => {
+            onDialogEditOk(dialog, () => {
+              if (dialog.id) {
+                addTemporaryConversation(dialog.id);
               }
-            })
-          }
+            });
+          }}
           clearDialog={clearDialog}
         ></ChatConfigurationModal>
       )}
