@@ -1,4 +1,6 @@
 import RenameModal from '@/components/rename-modal';
+import chatService from '@/services/chat-service';
+import { getConversationId } from '@/utils/chat';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Avatar,
@@ -23,6 +25,7 @@ import {
   useHandleItemHover,
   useRenameConversation,
   useSelectDerivedConversationList,
+  useSetConversation,
 } from './hooks';
 
 import EmbedModal from '@/components/api-service/embed-modal';
@@ -84,6 +87,7 @@ const Chat = () => {
   const [controller, setController] = useState(new AbortController());
   const { showEmbedModal, hideEmbedModal, embedVisible, beta } =
     useShowEmbedModal();
+  const { setConversationEmpty } = useSetConversation();
 
   const { list: knowledgeList } = useFetchKnowledgeList();
 
@@ -138,9 +142,33 @@ const Chat = () => {
 
   const handleDialogCardClick = useCallback(
     (dialogIdTemp: string) => () => {
-      handleClickDialog(dialogIdTemp, conversationId);
+      chatService
+        .listConversation({ dialogId: dialogIdTemp })
+        .then(({ data: currentConversationList }: { data: any[] }) => {
+          if (!currentConversationList?.data?.length) {
+            const newId = getConversationId();
+            setConversationEmpty('新对话', dialogIdTemp, true, newId);
+            handleClickDialog(dialogIdTemp, newId);
+          } else {
+            handleClickDialog(dialogIdTemp, conversationId);
+          }
+        });
+
+      // if (!currentConversationList?.length) {
+      //   handleClickDialog(dialogIdTemp, '');
+      //   const newId = getConversationId();
+      //   debugger
+      //   setConversationEmpty('新对话', dialogIdTemp, true, newId);
+      // } else {
+      //   handleClickDialog(dialogIdTemp, conversationId);
+      // }
     },
-    [handleClickDialog],
+    [
+      handleClickDialog,
+      conversationList,
+      conversationId,
+      handleClickConversation,
+    ],
   );
 
   const handleConversationCardClick = useCallback(
@@ -318,7 +346,7 @@ const Chat = () => {
             <Spin
               spinning={conversationLoading}
               wrapperClassName={styles.chatSpin}
-            > 
+            >
               {conversationList.map((x) => (
                 <Card
                   key={x.id}
@@ -370,14 +398,13 @@ const Chat = () => {
           showModal={showDialogEditModal}
           hideModal={hideDialogEditModal}
           loading={dialogSettingLoading}
-          onOk={(dialog) =>
-            onDialogEditOk(dialog, (ret) => {
-              debugger;
-              if (ret.id) {
-                addTemporaryConversation(ret.id);
+          onOk={(dialog) => {
+            onDialogEditOk(dialog, () => {
+              if (dialog.id) {
+                addTemporaryConversation(dialog.id);
               }
-            })
-          }
+            });
+          }}
           clearDialog={clearDialog}
         ></ChatConfigurationModal>
       )}
