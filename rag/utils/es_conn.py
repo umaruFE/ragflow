@@ -254,7 +254,7 @@ class ESConnection(DocStoreConnection):
                 if str(e).find("Timeout") > 0:
                     continue
                 raise e
-        logger.error("ESConnection.search timeout for 3 times!")
+        logger.error(f"ESConnection.search timeout for {ATTEMPT_TIME} times!")
         raise Exception("ESConnection.search timeout.")
 
     def get(self, chunkId: str, indexName: str, knowledgebaseIds: list[str]) -> dict | None:
@@ -274,7 +274,7 @@ class ESConnection(DocStoreConnection):
                 if str(e).find("Timeout") > 0:
                     continue
                 raise e
-        logger.error("ESConnection.get timeout for 3 times!")
+        logger.error(f"ESConnection.get timeout for {ATTEMPT_TIME} times!")
         raise Exception("ESConnection.get timeout.")
 
     def insert(self, documents: list[dict], indexName: str, knowledgebaseId: str = None) -> list[str]:
@@ -483,6 +483,9 @@ class ESConnection(DocStoreConnection):
                 if isinstance(v, list):
                     m[n] = v
                     continue
+                if n == "available_int" and isinstance(v, (int, float)):
+                    m[n] = v
+                    continue
                 if not isinstance(v, str):
                     m[n] = str(m[n])
                 # if n.find("tks") > 0:
@@ -559,5 +562,5 @@ class ESConnection(DocStoreConnection):
             except Exception:
                 logger.exception("ESConnection.sql got exception")
                 return None
-        logger.error("ESConnection.sql timeout for 3 times!")
+        logger.error(f"ESConnection.sql timeout for {ATTEMPT_TIME} times!")
         return None

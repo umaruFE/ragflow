@@ -217,7 +217,7 @@ class OSConnection(DocStoreConnection):
         if bqry:
             s = s.query(bqry)
         for field in highlightFields:
-            s = s.highlight(field)
+            s = s.highlight(field,force_source=True,no_match_size=30,require_field_match=False)
 
         if orderBy:
             orders = list()
@@ -262,14 +262,14 @@ class OSConnection(DocStoreConnection):
                 if str(e).find("Timeout") > 0:
                     continue
                 raise e
-        logger.error("OSConnection.search timeout for 3 times!")
+        logger.error(f"OSConnection.search timeout for {ATTEMPT_TIME} times!")
         raise Exception("OSConnection.search timeout.")
 
     def get(self, chunkId: str, indexName: str, knowledgebaseIds: list[str]) -> dict | None:
         for i in range(ATTEMPT_TIME):
             try:
                 res = self.os.get(index=(indexName),
-                                  id=chunkId, source=True, )
+                                  id=chunkId, _source=True, )
                 if str(res.get("timed_out", "")).lower() == "true":
                     raise Exception("Es Timeout.")
                 chunk = res["_source"]
@@ -282,7 +282,7 @@ class OSConnection(DocStoreConnection):
                 if str(e).find("Timeout") > 0:
                     continue
                 raise e
-        logger.error("OSConnection.get timeout for 3 times!")
+        logger.error(f"OSConnection.get timeout for {ATTEMPT_TIME} times!")
         raise Exception("OSConnection.get timeout.")
 
     def insert(self, documents: list[dict], indexName: str, knowledgebaseId: str = None) -> list[str]:
@@ -329,7 +329,7 @@ class OSConnection(DocStoreConnection):
             chunkId = condition["id"]
             for i in range(ATTEMPT_TIME):
                 try:
-                    self.os.update(index=indexName, id=chunkId, doc=doc)
+                    self.os.update(index=indexName, id=chunkId, body=doc)
                     return True
                 except Exception as e:
                     logger.exception(
@@ -411,7 +411,10 @@ class OSConnection(DocStoreConnection):
             chunk_ids = condition["id"]
             if not isinstance(chunk_ids, list):
                 chunk_ids = [chunk_ids]
-            qry = Q("ids", values=chunk_ids)
+            if not chunk_ids:  # when chunk_ids is empty, delete all
+                qry = Q("match_all")
+            else:
+                qry = Q("ids", values=chunk_ids)
         else:
             qry = Q("bool")
             for k, v in condition.items():
@@ -554,5 +557,5 @@ class OSConnection(DocStoreConnection):
             except Exception:
                 logger.exception("OSConnection.sql got exception")
                 return None
-        logger.error("OSConnection.sql timeout for 3 times!")
+        logger.error(f"OSConnection.sql timeout for {ATTEMPT_TIME} times!")
         return None

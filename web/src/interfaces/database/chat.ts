@@ -73,6 +73,7 @@ export interface Message {
   prompt?: string;
   id?: string;
   audio_binary?: string;
+  data?: any;
 }
 
 export interface IReferenceChunk {
@@ -86,6 +87,7 @@ export interface IReferenceChunk {
   vector_similarity: number;
   term_similarity: number;
   positions: number[];
+  doc_type?: string;
 }
 
 export interface IReference {
@@ -101,6 +103,7 @@ export interface IAnswer {
   prompt?: string;
   id?: string;
   audio_binary?: string;
+  data?: any;
 }
 
 export interface Docagg {

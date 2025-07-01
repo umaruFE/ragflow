@@ -45,6 +45,8 @@ from .embedding_model import (
     HuggingFaceEmbed,
     VolcEngineEmbed,
     GPUStackEmbed,
+    NovitaEmbed,
+    GiteeEmbed
 )
 from .chat_model import (
     GptTurbo,
@@ -86,6 +88,7 @@ from .chat_model import (
     HuggingFaceChat,
     GPUStackChat,
     ModelScopeChat,
+    GiteeChat
 )
 
 from .cv_model import (
@@ -128,6 +131,8 @@ from .rerank_model import (
     QWenRerank,
     GPUStackRerank,
     HuggingfaceRerank,
+    NovitaRerank,
+    GiteeRerank
 )
 
 from .sequence2txt_model import (
@@ -137,6 +142,7 @@ from .sequence2txt_model import (
     XinferenceSeq2txt,
     TencentCloudSeq2txt,
     GPUStackSeq2txt,
+    GiteeSeq2txt
 )
 
 from .tts_model import (
@@ -180,6 +186,8 @@ EmbeddingModel = {
     "HuggingFace": HuggingFaceEmbed,
     "VolcEngine": VolcEngineEmbed,
     "GPUStack": GPUStackEmbed,
+    "NovitaAI": NovitaEmbed,
+    "GiteeAI": GiteeEmbed
 }
 
 CvModel = {
@@ -203,7 +211,7 @@ CvModel = {
     "Tencent Hunyuan": HunyuanCV,
     "Anthropic": AnthropicCV,
     "SILICONFLOW": SILICONFLOWCV,
-    "GPUStack": GPUStackCV,
+    "GPUStack": GPUStackCV
 }
 
 ChatModel = {
@@ -247,6 +255,7 @@ ChatModel = {
     "HuggingFace": HuggingFaceChat,
     "GPUStack": GPUStackChat,
     "ModelScope":ModelScopeChat,
+    "GiteeAI": GiteeChat
 }
 
 RerankModel = {
@@ -267,6 +276,8 @@ RerankModel = {
     "Tongyi-Qianwen": QWenRerank,
     "GPUStack": GPUStackRerank,
     "HuggingFace": HuggingfaceRerank,
+    "NovitaAI": NovitaRerank,
+    "GiteeAI": GiteeRerank
 }
 
 Seq2txtModel = {
@@ -276,6 +287,7 @@ Seq2txtModel = {
     "Xinference": XinferenceSeq2txt,
     "Tencent Cloud": TencentCloudSeq2txt,
     "GPUStack": GPUStackSeq2txt,
+    "GiteeAI": GiteeSeq2txt
 }
 
 TTSModel = {
