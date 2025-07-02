@@ -59,12 +59,15 @@ const methods = {
   },
   getList: {
     url: kb_list,
-    method: 'get',
+    method: 'post',
+    headers: {
+    'Content-Type': 'application/json', // 关键修改：指定JSON格式
+  },
   },
   // document manager
   get_document_list: {
     url: get_document_list,
-    method: 'get',
+    method: 'post',
   },
   document_change_status: {
     url: document_change_status,
@@ -181,11 +184,11 @@ export function deleteKnowledgeGraph(knowledgeId: string) {
 export const listDataset = (
   params?: IFetchKnowledgeListRequestParams,
   body?: IFetchKnowledgeListRequestBody,
-) => request.get(api.kb_list, { data: body || {}, params });
+) => request.post(api.kb_list, { data: body || {}, params });
 
 export const listDocument = (
   params?: IFetchKnowledgeListRequestParams,
   body?: IFetchDocumentListRequestBody,
-) => request.get(api.get_document_list, { data: body || {}, params });
+) => request.post(api.get_document_list, { data: body || {}, params });
 
 export default kbService;

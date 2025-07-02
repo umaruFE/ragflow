@@ -38,7 +38,7 @@ export default defineConfig({
   proxy: [
     {
       context: ['/api', '/v1'],
-      target: 'http://192.168.223.83:9380/',
+      target: 'http://192.168.223.202:9380/',
       changeOrigin: true,
       ws: true,
       logger: console,
@@ -53,5 +53,8 @@ export default defineConfig({
 
     return memo;
   },
-  tailwindcss: {},
+  tailwindcss: {
+    generate: false, 
+    timeout: 10000
+  },
 });
