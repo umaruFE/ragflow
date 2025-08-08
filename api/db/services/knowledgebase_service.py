@@ -436,3 +436,31 @@ class KnowledgebaseService(CommonService):
             else:
                 raise e
 
+    def force_refresh_context(cls, kb_id):
+        """
+        Forces a context refresh for a knowledge base by updating its update_time.
+        This acts as a cache invalidation signal for the RAG retrieval pipeline.
+
+        Args:
+            kb_id (str): The unique identifier of the knowledge base to refresh.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        try:
+            query = cls.model.update(
+                update_time=current_timestamp(),
+                update_date=datetime_format(datetime.now())
+            ).where(cls.model.id == kb_id)
+            
+            updated_rows = query.execute()
+            
+            if updated_rows > 0:
+                print(f"知识库 {kb_id} 的上下文刷新信号已发送 (update_time已更新)。")
+                return True
+            else:
+                print(f"警告：尝试刷新知识库 {kb_id}，但未找到该记录。")
+                return False
+        except Exception as e:
+            print(f"错误：刷新知识库 {kb_id} 上下文时出错: {e}")
+            return False

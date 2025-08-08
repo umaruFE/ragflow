@@ -506,6 +506,27 @@ def upload_parse():
                 data=False, message='No file selected!', code=settings.RetCode.ARGUMENT_ERROR)
 
     doc_ids = doc_upload_and_parse(request.form.get("conversation_id"), file_objs, objs[0].tenant_id)
+
+    if doc_ids:
+        try:
+            # 2.1 获取文件名用于提示
+            filenames = ", ".join([f.filename for f in file_objs])
+            
+            # 2.2 构建一条特殊的系统消息
+            system_message = {
+                "role": "system",
+                "content": f"New file(s) uploaded: {filenames}. The knowledge base has been updated.",
+                "type": "knowledge_update" # 自定义一个类型用于识别
+            }
+
+            # 2.3 获取当前对话，并追加这条新消息
+            # (这需要 ConversationService 支持一个 'append_message' 的方法)
+            API4ConversationService.append_message(conversation_id, system_message)
+            print(f"向对话 {conversation_id} 注入了知识更新信号。")
+
+        except Exception as e:
+            # 即使注入消息失败，也不应该影响主流程
+            print(f"警告：向对话注入更新信号时出错: {e}")
     return get_json_result(data=doc_ids)
 
 
